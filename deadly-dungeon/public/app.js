@@ -331,6 +331,14 @@ function boardCells(st) {
       }
       if (me.pos.r === r && me.pos.c === c) cls += ' me';
 
+      // ประตูที่เปิดของห้องที่เคยเข้าไปเอง (แสดงเฉพาะทางที่เปิด ทางปิดไม่แสดง)
+      const doors = me.doors?.[k];
+      if (doors) {
+        for (const d of ['n', 's', 'e', 'w']) {
+          if (doors.includes(d)) inner += `<i class="door d-${d}"></i>`;
+        }
+      }
+
       // tokens
       const here = playersAt[k] || [];
       let tokens = '';
