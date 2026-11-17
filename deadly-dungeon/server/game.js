@@ -975,12 +975,13 @@ export class Game {
         const meetingTogether = this.pending?.type === 'meeting'
           && this.pending.participants?.includes(me.id) && this.pending.participants.includes(q.id);
         const showAlive = q.id === me.id || this.status === 'ended' || meetingTogether;
-        // ผีที่ยืนอยู่ในกำแพงจะฟ้องว่าตายแล้ว → ไม่ส่งตำแหน่ง
-        const onWall = this.cells[q.pos.r][q.pos.c].type !== 'room';
+        // ตำแหน่งของคนอื่นส่งให้เฉพาะตอนอยู่ช่องเดียวกัน (หรือเกมจบแล้ว) ไม่งั้นไม่ส่งออกจาก server
+        const sameCell = q.pos.r === me.pos.r && q.pos.c === me.pos.c;
+        const showPos = q.id === me.id || sameCell || this.status === 'ended';
         return {
           id: q.id, name: q.name, color: q.color,
           alive: showAlive ? q.alive : null,
-          pos: q.id !== me.id && onWall && !showAlive ? null : q.pos,
+          pos: showPos ? q.pos : null,
           frozen: q.frozen, shield: q.shield,
           offline: !!q.disconnected, // หลุดอยู่ (ตาจะถูกข้ามจนกว่าจะกลับมา)
         };
