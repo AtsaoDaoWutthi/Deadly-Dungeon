@@ -1,0 +1,18 @@
+{
+  "name": "deadly-dungeon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deadly Dungeon — เกมบอร์ดกระดานสุ่ม เล่นหลายคนผ่านเว็บ (Node.js + WebSocket)",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node test.js && node test2.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
