@@ -319,10 +319,9 @@ function boardCells(st) {
       let cls = 'cell fog', inner = '';
       const note = notes.cells[k];
       if (knownNum != null) { cls = 'cell room'; inner = `<span class="num">${knownNum}</span>`; }
-      else if (revealed === 'wall') { cls = 'cell wall'; }
       else if (revealed === 'room') { cls = 'cell room unknown'; inner = note && note !== 'w' ? '' : '<span class="num">?</span>'; }
       // ช่องที่ยังไม่รู้ → แสดงสิ่งที่จดเดาไว้ (คนละแบบกับเลขจริง)
-      const noteable = knownNum == null && revealed !== 'wall';
+      const noteable = knownNum == null;
       if (noteable && note) inner += `<span class="note${note === 'w' ? ' w' : ''}" title="ที่คุณจดไว้">${note === 'w' ? 'w?' : esc(note)}</span>`;
       if (noteable) cls += ' noteable';
 
@@ -331,14 +330,6 @@ function boardCells(st) {
         cls += ' move-target';
       }
       if (me.pos.r === r && me.pos.c === c) cls += ' me';
-
-      // ประตู/ผนังของห้องที่เคยเข้าไปเอง
-      const doors = me.doors?.[k];
-      if (doors) {
-        for (const d of ['n', 's', 'e', 'w']) {
-          inner += doors.includes(d) ? `<i class="door d-${d}"></i>` : `<i class="shut s-${d}"></i>`;
-        }
-      }
 
       // tokens
       const here = playersAt[k] || [];
@@ -519,7 +510,8 @@ function playersPanel(st) {
 function inventoryPanel(st) {
   const me = st.me;
   if (!me.alive) {
-    return `<div class="panel inv-panel"><h3>กระเป๋าไอเทม</h3><div class="hint">ผีใช้ไอเทมไม่ได้ (จะกลับมาใช้ได้เมื่อถูกชุบ)</div></div>`;
+    const ghostCanAct = st.currentPlayerId === me.id && !st.pending;
+    return `<div class="panel inv-panel"><h3>กระเป๋าไอเทม</h3><div class="hint">ผีใช้ไอเทมไม่ได้ (จะกลับมาใช้ได้เมื่อถูกชุบ)</div>${ghostCanAct ? `<div class="mt"><button class="btn" data-action="end_turn">จบตา ➜</button></div>` : ''}</div>`;
   }
   const items = me.inventory.map((id) => {
     const m = ITEM_META[id] || { name: id, icon: '❔' };
